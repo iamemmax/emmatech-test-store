@@ -5,6 +5,7 @@
 
   "scripts": {
     "build": "tsc",
+    "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
     "dev": "concurrently \"npm:dev:server\" \"npm:dev:types\"",
     "dev:server": "nodemon --watch src --ext ts,json --exec \"tsx src/server.ts\"",
