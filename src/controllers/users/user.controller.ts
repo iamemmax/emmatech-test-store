@@ -128,7 +128,7 @@ export const refreshToken = AsyncHandler(async (req: Request, res: Response) => 
         // revoke whatever's stored so a stolen token can't be retried.
         if (user) {
             user.clearRefreshToken();
-            await user.save();
+            await user.save({ validateModifiedOnly: true });
         }
         res.status(401);
         throw new Error("Not authorised, refresh token invalid or expired");
@@ -172,7 +172,7 @@ export const logoutUser = AsyncHandler(async (req: Request, res: Response) => {
             const user = await userModel.findById(decoded.userId).select("+token +tokenExpiresAt");
             if (user) {
                 user.clearRefreshToken();
-                await user.save();
+                await user.save({ validateModifiedOnly: true });
             }
         } catch (error) {
         res.status(401);

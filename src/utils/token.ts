@@ -48,7 +48,10 @@ export const issueTokens = async (
   const refreshToken = generateRefreshToken(userId);
 
   user.setRefreshToken(refreshToken, new Date(Date.now() + REFRESH_COOKIE_MAX_AGE));
-  await user.save();
+  // validateModifiedOnly: this save only persists token bookkeeping — it
+  // shouldn't fail because an unrelated profile field (e.g. username on an
+  // older account) doesn't pass today's schema requirements.
+  await user.save({ validateModifiedOnly: true });
 
   res.cookie("jwt", accessToken, cookieOptions(ACCESS_COOKIE_MAX_AGE));
   res.cookie("refreshToken", refreshToken, cookieOptions(REFRESH_COOKIE_MAX_AGE));
