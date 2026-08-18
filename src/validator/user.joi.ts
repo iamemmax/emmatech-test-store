@@ -9,7 +9,7 @@ export const registerSchema = Joi.object({
     "string.min": "Last name must be at least 2 characters",
     "any.required": "last name is required",
   }),
-  username: Joi.string().trim().min(3).max(30).required().messages({
+  username: Joi.string().trim().min(3).required().messages({
     "string.min": "Username must be at least 3 characters",
     "any.required": "Username is required",
   }),

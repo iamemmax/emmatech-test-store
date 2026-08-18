@@ -17,7 +17,6 @@ export interface IUserDocument extends Document {
   token?: string;
   tokenExpiresAt?: Date;
   verified: boolean;
-
   matchPassword(entered: string): Promise<boolean>;
   setRefreshToken(token: string, expiresAt: Date): void;
   matchRefreshToken(token: string): boolean;

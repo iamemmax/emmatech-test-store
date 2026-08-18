@@ -44,10 +44,15 @@ export const registerNewUser = AsyncHandler(
         const { first_name, last_name, username, email, password } = req.body;
 
         const userWithEmailExist = await userModel.findOne({ email });
+        const userWithUsernameExist = await userModel.findOne({ username });
 
         if (userWithEmailExist) {
             res.status(401);
             throw new Error(`User with ${email} already exists`);
+        }
+        if (userWithUsernameExist) {
+            res.status(401);
+            throw new Error(`User with ${username} already exists`);
         }
 
         const user = await userModel.create({
