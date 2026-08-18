@@ -2,9 +2,10 @@ import { Request, Response } from "express"
 import AsyncHandler from "express-async-handler"
 import jwt from "jsonwebtoken"
 import { UserProps } from "../../types/users/user.types"
-import userModel from "../../schema/users/user.model"
+import userModel, { IUserDocument } from "../../schema/users/user.model"
 import { issueTokens, clearAuthCookies } from "../../utils/token"
 import { env } from "../../utils/require-env"
+import { HydratedDocument } from "mongoose"
 
 interface RefreshPayload {
     userId: string;
@@ -28,7 +29,7 @@ export const listAlluser = (AsyncHandler(async (req: Request<{}, {}, UserProps>,
 export const getAuthenticatedUser = (AsyncHandler(async (req: Request<{ userId: string }, {}, UserProps>, res: Response) => {
 
     try {
-        const users = await userModel.findById({ _id: req.params.userId }).select("-__v -password -token")
+        const users =  await req.user
         res.status(201).json({
             res: "ok",
             users
@@ -43,19 +44,16 @@ export const registerNewUser = AsyncHandler(
     async (req: Request, res: Response) => {
         const { first_name, last_name, username, email, password } = req.body;
 
-        const userWithEmailExist = await userModel.findOne({ email });
-        const userWithUsernameExist = await userModel.findOne({ username });
+        const userExist = await userModel.findOne({ $or:[{ email }, { username }] });
+        // const userWithUsernameExist = await userModel.findOne({ username });
 
-        if (userWithEmailExist) {
+        if (userExist) {
             res.status(401);
-            throw new Error(`User with ${email} already exists`);
+            throw new Error(`User already exists`);
         }
-        if (userWithUsernameExist) {
-            res.status(401);
-            throw new Error(`User with ${username} already exists`);
-        }
+       
 
-        const user = await userModel.create({
+        const user:HydratedDocument<IUserDocument> = await userModel.create({
             first_name,
             last_name,
             email,
@@ -85,7 +83,9 @@ export const loginUser = AsyncHandler(async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     // select("+password") — needed because the schema hides it
-    const user = await userModel.findOne({ email }).select("+password");
+const user = await userModel
+  .findOne({ email })
+  .select("+password");
 
     if (!user || !(await user.matchPassword(password))) {
         res.status(401);

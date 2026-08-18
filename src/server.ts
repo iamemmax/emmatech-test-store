@@ -7,6 +7,7 @@ import { env } from "./utils/require-env";
 import { errorHandler, notFound } from "./middlewares/errorHandlers";
 import connectDb from "./config/db";
 import userRouter from "./routes/users/user.router";
+import categoryRouter from "./routes/categories/cateories.router";
 const app = express();
 app.use(cors())
 app.use(express.json())
@@ -19,6 +20,7 @@ app.get("/", (req:Request, res:Response) => {
 })
 
 app.use("/api/users", userRouter)
+app.use("/api/categories", categoryRouter)
 app.use(notFound)
 app.use(errorHandler)
 // const PORT = process.env.PORT
