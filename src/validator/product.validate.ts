@@ -38,3 +38,34 @@ export const validateReviewProduct = Joi.object<productReviewProps>({
     reviewDate: Joi.date()
 
 })
+
+import { isValidObjectId } from "mongoose";
+
+const objectId = Joi.string().custom((value, helpers) => {
+  if (!isValidObjectId(value)) return helpers.error("any.invalid");
+  return value;
+}, "ObjectId validation").messages({
+  "any.invalid": "must be a valid id",
+});
+
+// multipart sends one value as a string, several as an array — accept both
+const stringList = Joi.alternatives().try(
+  Joi.array().items(Joi.string().trim()),
+  Joi.string().trim()
+).custom(v => (Array.isArray(v) ? v : [v]));
+
+export const updateProductSchema = Joi.object({
+  brand: Joi.string().trim().min(1).max(100),
+  title: Joi.string().trim().min(1).max(200),
+  category: objectId,
+  description: Joi.string().trim().max(5000).allow(""),
+  price: Joi.number().positive().precision(2),
+  quantity: Joi.number().integer().min(0),
+  size: stringList,
+  colors: stringList,
+  removeImages: stringList,
+})
+  .min(1)
+  .messages({
+    "object.min": "no fields to update",
+  });
