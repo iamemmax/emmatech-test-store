@@ -288,6 +288,7 @@ export const updateProduct = async (
     }
 
     // normalise removeImages — multipart sends one value as string, many as array
+    // normalise removeImages — multipart sends one value as string, many as array
     const raw = req.body.removeImages;
     const removeImages: string[] = raw ? (Array.isArray(raw) ? raw : [raw]) : [];
 
