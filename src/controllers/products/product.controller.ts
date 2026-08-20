@@ -287,10 +287,7 @@ export const updateProduct = async (
       return res.status(404).json({ res: "fail", msg: "product not found" });
     }
 
-    // normalise removeImages — multipart sends one value as string, many as array
-    // normalise removeImages — multipart sends one value as string, many as array
-    // normalise removeImages — multipart sends one value as string, many as array
-    // normalise removeImages — multipart sends one value as string, many as array
+    console.log("")
     const raw = req.body.removeImages;
     const removeImages: string[] = raw ? (Array.isArray(raw) ? raw : [raw]) : [];
 
