@@ -8,10 +8,18 @@ interface TokenPayload extends JwtPayload {
   userId: string;
 }
 
-/** Verifies the JWT cookie and attaches the current user to the request. */
+/**
+ * Verifies the access token and attaches the current user to the request.
+ * Accepts either the httpOnly "jwt" cookie or an "Authorization: Bearer
+ * <token>" header — login/register/refresh all return the token in the
+ * JSON body specifically so non-cookie clients (Authorization header,
+ * mobile, etc.) have a way to authenticate too.
+ */
 export const protect = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.cookies?.jwt;
+    const authHeader = req.headers.authorization;
+    const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined;
+    const token = req.cookies?.jwt ?? bearerToken;
 
     if (!token) {
       res.status(401);
