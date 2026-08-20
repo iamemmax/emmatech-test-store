@@ -48,7 +48,7 @@ export const createProductCategory = async (req: Request<{}, {}, CategoryProps>,
 
 export const getCategoryList = AsyncHandler(async (req: Request, res: Response) => {
     try {
-        const categories = await categoryModel.find().select("-__v -_id")
+        const categories = await categoryModel.find().select("-__v ")
         if (categories) {
             res.status(200).json({
                 success: true,

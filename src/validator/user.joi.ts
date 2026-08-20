@@ -31,3 +31,6 @@ export const loginSchema = Joi.object({
   email: Joi.string().email().lowercase().trim().required(),
   password: Joi.string().required(),
 });
+export const productCcategory = Joi.object({
+  name: Joi.string().lowercase().trim().required(),
+});
